@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="keendo-collections-list">
+  <template>
+    <style>
+
+    </style>
+  blablabla
+  </template>
+
+  <body>
+    <!-- Get all the collections documents on Nuxeo Platform -->
+
+    <nuxeo-page-provider  auto id="getCollections"
+                          query="SELECT * FROM document  WHERE ecm:mixinType != 'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND ecm:currentLifeCycleState != 'deleted' ORDER BY dc:title"
+                          current-page={{myCollections}}>
+    </nuxeo-page-provider>
+
+    <paper-menu attr-for-selected="data-route" selected="[[route]]">
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-menu>
+  </body>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'keendo-collections-list',
+
+        properties: {
+          // list of collections obtained from the nuxeo page provider
+          myCollections:{
+            type: Array,
+            observer: 'handle'
+          }
+        },
+        handle: function(){
+          // create new object to contain collections data
+          // TODO : store data in a json file
+          var collections = [];
+          for(var i=0; i<this.myCollections.length; i++){
+            collections.push({title:this.getCollectionName(this.myCollections[i])});
+          }
+
+          // add data to the table
+          this.$.collectionsList.setAttribute("items",JSON.stringify(collections));
+        },
+        // get the customer name
+        getCollectionName: function(collection){
+          return collection.properties["dc:title"];
+        },
+      });
+    })();
+  </script>
+</dom-module>
